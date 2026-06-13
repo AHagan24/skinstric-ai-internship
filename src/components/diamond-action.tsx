@@ -4,7 +4,10 @@ type DiamondActionProps = {
   direction: "left" | "right";
   label: string;
   href?: string;
+  onClick?: () => void;
+  disabled?: boolean;
   compact?: boolean;
+  variant?: "default" | "bottom";
   id?: string;
 };
 
@@ -12,19 +15,39 @@ export function DiamondAction({
   direction,
   label,
   href,
+  onClick,
+  disabled = false,
   compact = false,
+  variant = "default",
   id,
 }: DiamondActionProps) {
   const isLeft = direction === "left";
-  const className = `group relative inline-flex h-9 items-center justify-center whitespace-nowrap ${
-    compact ? "gap-4 text-[12px] font-bold" : "gap-4 px-3 py-1 text-sm font-normal"
-  } transition-transform duration-300 hover:scale-105`;
+  const isBottomAction = variant === "bottom";
+  const className = `group inline-flex items-center justify-center gap-4 whitespace-nowrap text-[#1A1B1C] transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100 ${
+    isBottomAction
+      ? "text-sm font-normal"
+      : compact
+        ? "h-9 text-[12px] font-bold"
+        : "h-9 px-3 py-1 text-sm font-normal"
+  }`;
 
   const content = (
     <>
-      {isLeft && <Diamond direction={direction} compact={compact} />}
+      {isLeft && (
+        <Diamond
+          direction={direction}
+          compact={compact}
+          isBottomAction={isBottomAction}
+        />
+      )}
       <span>{label}</span>
-      {!isLeft && <Diamond direction={direction} compact={compact} />}
+      {!isLeft && (
+        <Diamond
+          direction={direction}
+          compact={compact}
+          isBottomAction={isBottomAction}
+        />
+      )}
     </>
   );
 
@@ -37,7 +60,13 @@ export function DiamondAction({
   }
 
   return (
-    <button id={id} type="button" className={className}>
+    <button
+      id={id}
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={className}
+    >
       {content}
     </button>
   );
@@ -46,30 +75,35 @@ export function DiamondAction({
 function Diamond({
   direction,
   compact,
+  isBottomAction,
 }: {
   direction: "left" | "right";
   compact: boolean;
+  isBottomAction: boolean;
 }) {
   return (
-    <span
+    <svg
+      viewBox="0 0 44 44"
       aria-hidden="true"
-      className={`relative block shrink-0 rotate-45 border border-[#1A1B1C] transition-transform duration-300 group-hover:scale-110 ${
-        compact ? "size-6" : "size-[30px]"
-      }`}
+      style={direction === "left" ? { transform: "scaleX(-1)" } : undefined}
+      className={`shrink-0 ${isBottomAction ? "h-10 w-10 object-contain" : compact ? "size-6" : "size-12"}`}
     >
-      <span
-        className={`absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2 -rotate-45 text-[#1A1B1C] ${
-          direction === "left" ? "rotate-180" : ""
-        }`}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          className={compact ? "size-3" : "size-[14px]"}
-        >
-          <path fill="currentColor" d="M8 5v14l11-7z" />
-        </svg>
-      </span>
-    </span>
+      <path
+        d="M22 1.5 42.5 22 22 42.5 1.5 22 22 1.5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        vectorEffect="non-scaling-stroke"
+      />
+      <path
+        d="m18.5 16.5 6.5 5.5-6.5 5.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
   );
 }
