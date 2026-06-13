@@ -40,6 +40,36 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
+.testing-loading-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: #b8b8b8;
+  animation: testing-dot-pulse 1.35s ease-in-out infinite;
+}
+
+.testing-loading-dot:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.testing-loading-dot:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+@keyframes testing-dot-pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.45;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
