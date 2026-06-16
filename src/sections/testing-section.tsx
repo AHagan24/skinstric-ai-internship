@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import { BackAction } from "@/components/back-action";
-import { DiamondAction } from "@/components/diamond-action";
+import { ProceedAction } from "@/components/proceed-action";
 import { RotatingDiamonds } from "@/components/rotating-diamonds";
 import {
   isValidProfileValue,
@@ -267,12 +267,7 @@ export function TestingSection() {
 
       {step === "complete" && (
         <div className="absolute bottom-8 right-8 z-30 flex">
-          <DiamondAction
-            direction="right"
-            href="/upload"
-            label="PROCEED"
-            variant="bottom"
-          />
+          <ProceedAction href="/testing/upload" />
         </div>
       )}
     </section>

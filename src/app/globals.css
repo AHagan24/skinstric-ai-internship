@@ -56,6 +56,17 @@ a:focus-visible {
   animation-delay: 300ms;
 }
 
+.camera-setup-icon-pulse {
+  will-change: transform, opacity;
+  animation: camera-setup-pulse 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: center center;
+}
+
+.camera-setup-text-fade {
+  will-change: opacity;
+  animation: camera-setup-text-fade 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 @keyframes testing-dot-pulse {
   0%,
   60%,
@@ -67,6 +78,30 @@ a:focus-visible {
   30% {
     opacity: 1;
     transform: translateY(-3px);
+  }
+}
+
+@keyframes camera-setup-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.58;
+    transform: scale(1.075);
+  }
+}
+
+@keyframes camera-setup-text-fade {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.58;
   }
 }
 
