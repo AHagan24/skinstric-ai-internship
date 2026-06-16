@@ -19,6 +19,11 @@ type UploadStep = "idle" | "processing";
 type UploadMode = "select" | "camera-setup" | "camera";
 type CameraModalStep = "idle" | "requesting";
 
+<<<<<<< HEAD
+=======
+const CAMERA_SETUP_DELAY_MS = 1200;
+
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
 function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -28,6 +33,7 @@ function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
+<<<<<<< HEAD
 function waitForStreamReady(stream: MediaStream): Promise<void> {
   return new Promise((resolve) => {
     const video = document.createElement("video");
@@ -62,6 +68,12 @@ function waitForStreamReady(stream: MediaStream): Promise<void> {
 export function UploadSection() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+=======
+export function UploadSection() {
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const cameraSetupTimeoutRef = useRef<number | null>(null);
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
   const [mode, setMode] = useState<UploadMode>("select");
   const [step, setStep] = useState<UploadStep>("idle");
   const [error, setError] = useState("");
@@ -74,11 +86,25 @@ export function UploadSection() {
   const isProcessing = step === "processing";
   const isRequestingCamera = cameraModalStep === "requesting";
 
+<<<<<<< HEAD
+=======
+  const clearCameraSetupDelay = () => {
+    if (cameraSetupTimeoutRef.current !== null) {
+      window.clearTimeout(cameraSetupTimeoutRef.current);
+      cameraSetupTimeoutRef.current = null;
+    }
+  };
+
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
   const releaseCameraStream = (stream: MediaStream | null) => {
     stream?.getTracks().forEach((track) => track.stop());
   };
 
   const resetCameraFlow = () => {
+<<<<<<< HEAD
+=======
+    clearCameraSetupDelay();
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
     releaseCameraStream(cameraStream);
     setCameraStream(null);
     setMode("select");
@@ -86,6 +112,10 @@ export function UploadSection() {
 
   useEffect(() => {
     return () => {
+<<<<<<< HEAD
+=======
+      clearCameraSetupDelay();
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
       releaseCameraStream(cameraStream);
     };
   }, [cameraStream]);
@@ -142,8 +172,17 @@ export function UploadSection() {
       setCameraModalStep("idle");
       setCameraStream(stream);
       setMode("camera-setup");
+<<<<<<< HEAD
       await waitForStreamReady(stream);
       setMode("camera");
+=======
+
+      clearCameraSetupDelay();
+      cameraSetupTimeoutRef.current = window.setTimeout(() => {
+        setMode("camera");
+        cameraSetupTimeoutRef.current = null;
+      }, CAMERA_SETUP_DELAY_MS);
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
     } catch {
       setCameraModalStep("idle");
       setCameraModalError(
@@ -191,7 +230,11 @@ export function UploadSection() {
       // Continue to results even when browser storage is unavailable.
     }
 
+<<<<<<< HEAD
     router.push("/summary");
+=======
+    router.push("/result");
+>>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
   };
 
   const handleFileChange = async (
