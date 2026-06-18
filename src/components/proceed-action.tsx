@@ -2,25 +2,48 @@ import Image from "next/image";
 import Link from "next/link";
 
 type ProceedActionProps = {
+  id?: string;
   href?: string;
   onClick?: () => void;
   disabled?: boolean;
+  variant?: "icon" | "shrunk" | "shrunk-white";
 };
 
 export function ProceedAction({
+  id,
   href,
   onClick,
   disabled = false,
+  variant = "icon",
 }: ProceedActionProps) {
-  const className =
-    "inline-flex h-[44px] w-[123px] transition-opacity duration-300 hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-30";
+  const className = `inline-flex transition-opacity duration-300 hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-30 ${
+    variant === "icon" ? "h-[44px] w-[44px]" : "h-[44px] w-[123px]"
+  }`;
+  const imageProps =
+    variant === "shrunk"
+      ? {
+          src: "/assets/button-icon-text-shrunk-proceed.png",
+          width: 123,
+          height: 44,
+        }
+      : variant === "shrunk-white"
+        ? {
+            src: "/assets/button-icon-text-shrunk-white.png",
+            width: 123,
+            height: 44,
+          }
+      : {
+          src: "/assets/forward-button-icon.png",
+          width: 44,
+          height: 44,
+        };
 
   const content = (
     <Image
-      src="/assets/button-icon-text-shrunk-proceed.png"
+      src={imageProps.src}
       alt="Proceed"
-      width={123}
-      height={44}
+      width={imageProps.width}
+      height={imageProps.height}
       priority
       className="h-full w-full object-contain"
     />
@@ -28,7 +51,7 @@ export function ProceedAction({
 
   if (href) {
     return (
-      <Link href={href} aria-label="Proceed" className={className}>
+      <Link id={id} href={href} aria-label="Proceed" className={className}>
         {content}
       </Link>
     );
@@ -36,6 +59,7 @@ export function ProceedAction({
 
   return (
     <button
+      id={id}
       type="button"
       onClick={onClick}
       disabled={disabled}
