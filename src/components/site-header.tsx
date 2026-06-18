@@ -4,6 +4,11 @@ import Link from "next/link";
 
 import { landingContent } from "@/lib/landing-content";
 
+type SiteHeaderProps = {
+  pageLabel?: string;
+  showEnterCode?: boolean;
+};
+
 function Bracket({ side }: { side: "left" | "right" }) {
   return (
     <span
@@ -29,7 +34,10 @@ function Bracket({ side }: { side: "left" | "right" }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({
+  pageLabel = landingContent.pageLabel,
+  showEnterCode = true,
+}: SiteHeaderProps) {
   return (
     <header className="relative z-50 mb-3 flex h-16 w-full items-start justify-between py-3">
       <div className="flex scale-75 items-center justify-center pt-1">
@@ -41,18 +49,20 @@ export function SiteHeader() {
         </Link>
         <Bracket side="left" />
         <span className="mx-1.5 text-sm font-semibold text-[#1A1B1C]/50">
-          {landingContent.pageLabel}
+          {pageLabel}
         </span>
         <Bracket side="right" />
       </div>
 
-      <button
-        type="button"
-        style={{ transform: "scale(0.8)" }}
-        className="mx-4 inline-flex h-9 items-center justify-center whitespace-nowrap bg-[#1A1B1C] px-4 py-2 text-[10px] font-semibold leading-4 text-[#FCFCFC] shadow-sm transition-colors duration-300 hover:bg-black"
-      >
-        {landingContent.enterCode}
-      </button>
+      {showEnterCode ? (
+        <button
+          type="button"
+          style={{ transform: "scale(0.8)" }}
+          className="mx-4 inline-flex h-9 items-center justify-center whitespace-nowrap bg-[#1A1B1C] px-4 py-2 text-[10px] font-semibold leading-4 text-[#FCFCFC] shadow-sm transition-colors duration-300 hover:bg-black"
+        >
+          {landingContent.enterCode}
+        </button>
+      ) : null}
     </header>
   );
 }

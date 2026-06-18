@@ -3,8 +3,16 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 
+import { BackAction } from "@/components/back-action";
 import { DiamondAction } from "@/components/diamond-action";
+import { ProceedAction } from "@/components/proceed-action";
 import { landingContent } from "@/lib/landing-content";
+
+const DESKTOP_HERO_TITLE_BOX_CLASS = "lg:h-[240px] lg:w-[680px]";
+const DESKTOP_HERO_TITLE_CLASS =
+  "lg:text-[128px] lg:leading-[120px] lg:tracking-[-0.07em]";
+const DESKTOP_HERO_ACTION_TEXT_CLASS =
+  "font-roobert text-[14px] font-semibold uppercase leading-4 tracking-[-0.02em]";
 
 export function HeroSection() {
   const rootRef = useRef<HTMLElement>(null);
@@ -106,14 +114,18 @@ export function HeroSection() {
       aria-labelledby="hero-title"
       className="max-sm:origin-center max-sm:scale-[0.75] max-sm:p-6 lg:fixed lg:inset-0 lg:overflow-hidden"
     >
-      <div className="relative flex h-[71dvh] flex-col items-center justify-center md:fixed md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
+      <div
+        className="relative flex h-[71dvh] flex-col items-center justify-center md:fixed md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2"
+      >
         <MobileDiamonds />
 
-        <div className="relative z-10 text-center max-sm:translate-y-1">
+        <div
+          className={`relative z-10 text-center max-sm:translate-y-1 ${DESKTOP_HERO_TITLE_BOX_CLASS}`}
+        >
           <h1
             ref={titleRef}
             id="hero-title"
-            className="text-[60px] font-light leading-none tracking-[-0.055em] opacity-0 lg:text-[100px]"
+            className={`font-roobert text-[60px] font-light leading-none tracking-[-0.055em] opacity-0 ${DESKTOP_HERO_TITLE_CLASS}`}
           >
             {landingContent.title[0]}
             <br />
@@ -186,6 +198,12 @@ function DesktopDiamond({
   actionRef,
 }: DesktopDiamondProps) {
   const isLeft = side === "left";
+  const label = isLeft
+    ? landingContent.discoverLabel
+    : landingContent.testLabel;
+  const labelClassName = isLeft
+    ? "h-4 w-[90px] text-right opacity-70"
+    : "h-4 w-[67px] text-left opacity-70";
 
   return (
     <div
@@ -206,18 +224,40 @@ function DesktopDiamond({
               : "left-[-24px] [@media(width>=1920px)]:left-[-8px]"
           }`}
         >
-          <DiamondAction
-            id={isLeft ? "discover-button" : "take-test-button"}
-            direction={isLeft ? "left" : "right"}
-            href={isLeft ? undefined : "/testing"}
-            label={
-              isLeft
-                ? landingContent.discoverLabel
-                : landingContent.testLabel
-            }
+          <DesktopHeroAction
+            isLeft={isLeft}
+            label={label}
+            labelClassName={labelClassName}
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+function DesktopHeroAction({
+  isLeft,
+  label,
+  labelClassName,
+}: {
+  isLeft: boolean;
+  label: string;
+  labelClassName: string;
+}) {
+  return (
+    <div
+      className={`flex items-center gap-4 text-[#1A1B1C] ${
+        isLeft ? "flex-row" : "flex-row-reverse"
+      }`}
+    >
+      {isLeft ? (
+        <BackAction id="discover-button" />
+      ) : (
+        <ProceedAction id="take-test-button" href="/testing" />
+      )}
+      <span className={`${DESKTOP_HERO_ACTION_TEXT_CLASS} ${labelClassName}`}>
+        {label}
+      </span>
     </div>
   );
 }

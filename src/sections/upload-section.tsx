@@ -30,10 +30,40 @@ function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
+function waitForStreamReady(stream: MediaStream): Promise<void> {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    let settled = false;
+
+    const finish = () => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      video.onloadedmetadata = null;
+      video.srcObject = null;
+      resolve();
+    };
+
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play().catch(() => {
+        // Autoplay may fail silently here; the visible camera view will retry.
+      });
+      finish();
+    };
+
+    window.setTimeout(finish, CAMERA_SETUP_DELAY_MS);
+  });
+}
+
 export function UploadSection() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const cameraSetupTimeoutRef = useRef<number | null>(null);
   const [mode, setMode] = useState<UploadMode>("select");
   const [step, setStep] = useState<UploadStep>("idle");
   const [error, setError] = useState("");
@@ -46,19 +76,11 @@ export function UploadSection() {
   const isProcessing = step === "processing";
   const isRequestingCamera = cameraModalStep === "requesting";
 
-  const clearCameraSetupDelay = () => {
-    if (cameraSetupTimeoutRef.current !== null) {
-      window.clearTimeout(cameraSetupTimeoutRef.current);
-      cameraSetupTimeoutRef.current = null;
-    }
-  };
-
   const releaseCameraStream = (stream: MediaStream | null) => {
     stream?.getTracks().forEach((track) => track.stop());
   };
 
   const resetCameraFlow = () => {
-    clearCameraSetupDelay();
     releaseCameraStream(cameraStream);
     setCameraStream(null);
     setMode("select");
@@ -66,7 +88,6 @@ export function UploadSection() {
 
   useEffect(() => {
     return () => {
-      clearCameraSetupDelay();
       releaseCameraStream(cameraStream);
     };
   }, [cameraStream]);
@@ -123,12 +144,8 @@ export function UploadSection() {
       setCameraModalStep("idle");
       setCameraStream(stream);
       setMode("camera-setup");
-
-      clearCameraSetupDelay();
-      cameraSetupTimeoutRef.current = window.setTimeout(() => {
-        setMode("camera");
-        cameraSetupTimeoutRef.current = null;
-      }, CAMERA_SETUP_DELAY_MS);
+      await waitForStreamReady(stream);
+      setMode("camera");
     } catch {
       setCameraModalStep("idle");
       setCameraModalError(
@@ -138,7 +155,7 @@ export function UploadSection() {
   };
 
   // Shared Phase 2 submission for both gallery uploads and selfie captures.
-  // Resolves by navigating to the results page; throws on failure.
+  // Resolves by navigating to the selector page; throws on failure.
   const submitImage = async (dataUrl: string) => {
     const base64 = dataUrl.split(",")[1];
 
@@ -176,7 +193,7 @@ export function UploadSection() {
       // Continue to results even when browser storage is unavailable.
     }
 
-    router.push("/result");
+    router.push("/select");
   };
 
   const handleFileChange = async (
@@ -291,6 +308,7 @@ export function UploadSection() {
 
           <div className="absolute bottom-8 left-8 z-30 flex">
             <BackAction
+              variant="shrunk"
               onClick={() => router.push("/testing")}
               disabled={isProcessing}
             />
@@ -410,6 +428,7 @@ function CameraOption({
           aria-hidden="true"
           width={136}
           height={136}
+          loading="eager"
           className="size-full object-contain"
         />
       </button>
@@ -486,7 +505,7 @@ function GalleryOption({
             ? "absolute left-[179px] top-[173px] z-10 block size-[136px] transition-transform duration-300 hover:scale-105"
             : "relative z-10 block size-[136px] transition-transform duration-300 hover:scale-105"
         }
-        >
+      >
         <Image
           src="/assets/gallery.png"
           alt=""
