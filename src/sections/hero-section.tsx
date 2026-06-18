@@ -147,9 +147,9 @@ export function HeroSection() {
             compact
           />
         </div>
-
-        <DesktopDescription />
       </div>
+
+      <DesktopDescription />
 
       <DesktopDiamond
         diamondRef={leftDiamondRef}
@@ -176,7 +176,7 @@ function MobileDiamonds() {
 
 function DesktopDescription() {
   return (
-    <p className="fixed bottom-[clamp(1.75rem,4.5vh,3.25rem)] left-[clamp(1.5rem,6vw,6rem)] z-10 hidden text-sm font-normal uppercase leading-[1.45] lg:block">
+    <p className="absolute bottom-[clamp(1.75rem,4.5vh,3.25rem)] left-[clamp(1.5rem,6vw,6rem)] z-10 hidden w-full max-w-none text-left text-sm font-normal uppercase leading-[1.45] lg:block">
       Skinstric developed an A.I. that creates a
       <br />
       highly-personalized routine tailored to
