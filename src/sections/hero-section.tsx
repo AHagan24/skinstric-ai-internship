@@ -112,20 +112,20 @@ export function HeroSection() {
     <section
       ref={rootRef}
       aria-labelledby="hero-title"
-      className="max-sm:origin-center max-sm:scale-[0.75] max-sm:p-6 lg:fixed lg:inset-0 lg:overflow-hidden"
+      className="px-4 pb-8 pt-6 sm:px-6 sm:pb-10 sm:pt-8 lg:fixed lg:inset-0 lg:overflow-hidden lg:px-0 lg:pb-0 lg:pt-0"
     >
       <div
-        className="relative flex h-[71dvh] flex-col items-center justify-center md:fixed md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2"
+        className="relative flex min-h-[calc(100dvh-6rem)] flex-col items-center justify-center lg:fixed lg:left-1/2 lg:top-1/2 lg:h-[71dvh] lg:-translate-x-1/2 lg:-translate-y-1/2"
       >
         <MobileDiamonds />
 
         <div
-          className={`relative z-10 text-center max-sm:translate-y-1 ${DESKTOP_HERO_TITLE_BOX_CLASS}`}
+          className={`relative z-10 text-center ${DESKTOP_HERO_TITLE_BOX_CLASS}`}
         >
           <h1
             ref={titleRef}
             id="hero-title"
-            className={`font-roobert text-[60px] font-light leading-none tracking-[-0.055em] opacity-0 ${DESKTOP_HERO_TITLE_CLASS}`}
+            className={`font-roobert text-[clamp(3rem,14vw,4.6rem)] font-light leading-[0.92] tracking-[-0.06em] opacity-0 sm:text-[clamp(4.4rem,12vw,5.8rem)] ${DESKTOP_HERO_TITLE_CLASS}`}
           >
             {landingContent.title[0]}
             <br />
@@ -135,11 +135,11 @@ export function HeroSection() {
           </h1>
         </div>
 
-        <p className="relative z-10 mt-4 w-[30ch] text-center text-[16px] font-semibold leading-[1.45] text-[#1A1B1C]/50 max-sm:translate-y-1 lg:hidden">
+        <p className="relative z-10 mt-4 w-full max-w-[30ch] text-center text-[15px] font-semibold leading-[1.45] text-[#1A1B1C]/50 sm:text-[16px] lg:hidden">
           {landingContent.description}
         </p>
 
-        <div className="relative z-10 mt-4 max-sm:translate-y-1 lg:hidden">
+        <div className="relative z-10 mt-4 lg:hidden">
           <DiamondAction
             direction="right"
             href="/testing"
@@ -168,15 +168,15 @@ export function HeroSection() {
 function MobileDiamonds() {
   return (
     <div aria-hidden="true" className="absolute inset-0 lg:hidden">
-      <div className="absolute left-1/2 top-1/2 size-[350px] -translate-x-1/2 -translate-y-1/2 rotate-45 border border-dotted border-[#A0A4AB]" />
-      <div className="absolute left-1/2 top-1/2 size-[420px] -translate-x-1/2 -translate-y-1/2 rotate-45 border border-dotted border-[#A0A4AB]" />
+      <div className="absolute left-1/2 top-1/2 size-[min(76vw,350px)] -translate-x-1/2 -translate-y-1/2 rotate-45 border border-dotted border-[#A0A4AB]" />
+      <div className="absolute left-1/2 top-1/2 size-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2 rotate-45 border border-dotted border-[#A0A4AB]" />
     </div>
   );
 }
 
 function DesktopDescription() {
   return (
-    <p className="fixed bottom-[calc(-7vh)] left-[calc(-20vw)] z-10 hidden -translate-x-1 text-sm font-normal uppercase leading-[1.45] lg:block xl:left-[calc(-27vw)] 2xl:left-[calc(-31vw)] [@media(width>=1920px)]:left-[calc(-33vw)]">
+    <p className="fixed bottom-[clamp(1.75rem,4.5vh,3.25rem)] left-[clamp(1.5rem,6vw,6rem)] z-10 hidden text-sm font-normal uppercase leading-[1.45] lg:block">
       Skinstric developed an A.I. that creates a
       <br />
       highly-personalized routine tailored to
@@ -210,8 +210,8 @@ function DesktopDiamond({
       ref={diamondRef}
       className={`absolute top-1/2 hidden size-[500px] -translate-y-1/2 transition-opacity duration-500 lg:block ${
         isLeft
-          ? "left-[-284px]"
-          : "right-[-284px]"
+          ? "left-[-220px] xl:left-[-252px] 2xl:left-[-284px]"
+          : "right-[-220px] xl:right-[-252px] 2xl:right-[-284px]"
       }`}
     >
       <div className="relative size-full">
@@ -220,8 +220,8 @@ function DesktopDiamond({
           ref={actionRef}
           className={`absolute top-1/2 z-10 -translate-y-1/2 ${
             isLeft
-              ? "right-[-27px] [@media(width>=1920px)]:right-[-9px]"
-              : "left-[-24px] [@media(width>=1920px)]:left-[-8px]"
+              ? "right-[12px] xl:right-[-10px] [@media(width>=1920px)]:right-[-9px]"
+              : "left-[12px] xl:left-[-10px] [@media(width>=1920px)]:left-[-8px]"
           }`}
         >
           <DesktopHeroAction

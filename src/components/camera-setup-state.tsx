@@ -32,13 +32,13 @@ const setupDiamondLayers = [
 
 export function CameraSetupState({ onCancel }: { onCancel: () => void }) {
   return (
-    <div className="absolute inset-0 overflow-auto bg-[#FCFCFC] text-[#1A1B1C] min-[1080px]:overflow-hidden">
+    <div className="absolute inset-0 overflow-x-hidden overflow-y-auto bg-[#FCFCFC] text-[#1A1B1C] min-[1080px]:overflow-hidden">
       <p className="absolute left-5 top-16 z-10 text-left text-[11px] font-semibold uppercase leading-4 sm:left-9 sm:text-xs min-[1080px]:left-8 min-[1080px]:top-[86px] min-[1080px]:text-base min-[1080px]:leading-6 min-[1080px]:tracking-[-0.02em]">
         TO START ANALYSIS
       </p>
 
-      <div className="mx-auto flex min-h-full max-w-[960px] flex-col items-center justify-center px-6 pb-32 pt-32 text-center min-[1080px]:pb-24">
-        <div className="relative flex h-[min(739.78px,78vw)] w-[min(739.78px,78vw)] min-h-[340px] min-w-[340px] items-center justify-center min-[1080px]:h-[739.78px] min-[1080px]:w-[739.78px]">
+      <div className="mx-auto flex min-h-full max-w-[960px] flex-col items-center justify-center px-4 pb-32 pt-28 text-center sm:px-6 sm:pt-32 min-[1080px]:pb-24">
+        <div className="relative flex h-[min(739.78px,82vw)] w-[min(739.78px,82vw)] min-h-[280px] min-w-[280px] items-center justify-center sm:min-h-[340px] sm:min-w-[340px] min-[1080px]:h-[739.78px] min-[1080px]:w-[739.78px]">
           <CameraSetupDiamonds />
 
           <div className="relative z-10 flex flex-col items-center">
@@ -73,7 +73,7 @@ export function CameraSetupState({ onCancel }: { onCancel: () => void }) {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-8 z-30 flex">
+      <div className="absolute bottom-6 left-4 z-30 flex sm:bottom-8 sm:left-8">
         <BackAction onClick={onCancel} />
       </div>
     </div>

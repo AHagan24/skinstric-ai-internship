@@ -279,7 +279,7 @@ export function UploadSection() {
   }
 
   return (
-    <section className="absolute inset-0 overflow-auto bg-[#FCFCFC] text-center min-[1080px]:overflow-hidden">
+    <section className="absolute inset-0 overflow-x-hidden overflow-y-auto bg-[#FCFCFC] text-center min-[1080px]:overflow-hidden">
       <div className="absolute inset-x-0 top-0 z-20">
         <SiteHeader />
       </div>
@@ -315,7 +315,7 @@ export function UploadSection() {
             TO START ANALYSIS
           </p>
 
-          <div className="mx-auto mb-[140px] mt-[156px] flex w-fit min-w-[520px] flex-col items-center gap-12 px-6 min-[1080px]:absolute min-[1080px]:left-1/2 min-[1080px]:top-1/2 min-[1080px]:mb-0 min-[1080px]:mt-0 min-[1080px]:w-full min-[1080px]:max-w-[1442px] min-[1080px]:-translate-x-1/2 min-[1080px]:-translate-y-1/2 min-[1080px]:flex-row min-[1080px]:items-start min-[1080px]:justify-between min-[1080px]:px-0">
+          <div className="mx-auto mb-[140px] mt-[156px] flex w-full max-w-[520px] flex-col items-center gap-12 px-4 sm:px-6 min-[1080px]:absolute min-[1080px]:left-1/2 min-[1080px]:top-1/2 min-[1080px]:mb-0 min-[1080px]:mt-0 min-[1080px]:w-full min-[1080px]:max-w-[1442px] min-[1080px]:-translate-x-1/2 min-[1080px]:-translate-y-1/2 min-[1080px]:flex-row min-[1080px]:items-start min-[1080px]:justify-between min-[1080px]:px-0">
             <div className="flex flex-col items-center gap-12 min-[1080px]:contents">
               <CameraOption onActivate={openCameraModal} desktop />
               <GalleryOption onActivate={openFilePicker} desktop />
@@ -330,7 +330,7 @@ export function UploadSection() {
             {error}
           </p>
 
-          <div className="absolute bottom-8 left-8 z-30 flex">
+          <div className="absolute bottom-6 left-4 z-30 flex sm:bottom-8 sm:left-8">
             <BackAction
               variant="shrunk"
               onClick={() => router.push("/testing")}
@@ -421,16 +421,16 @@ function CameraOption({
   return (
     <div
       className={
-        desktop
-          ? "relative h-[482px] w-[520px]"
-          : "relative flex h-[min(482px,44vh)] w-[min(520px,92vw)] shrink-0 items-center justify-center"
+          desktop
+            ? "relative h-[482px] w-[520px]"
+            : "relative flex h-[min(482px,44vh)] w-full max-w-[520px] shrink-0 items-center justify-center"
       }
     >
       <div
         className={
           desktop
             ? "absolute left-0 top-0 h-[482px] w-[482px]"
-            : "absolute left-1/2 top-1/2 size-[min(482px,92vw)] -translate-x-1/2 -translate-y-1/2"
+            : "absolute left-1/2 top-1/2 size-[min(482px,88vw)] -translate-x-1/2 -translate-y-1/2"
         }
       >
         <OptionDiamonds variant="camera" />
@@ -505,16 +505,16 @@ function GalleryOption({
   return (
     <div
       className={
-        desktop
-          ? "relative h-[482px] w-[488px]"
-          : "relative flex h-[min(482px,44vh)] w-[min(488px,92vw)] shrink-0 items-center justify-center"
+          desktop
+            ? "relative h-[482px] w-[488px]"
+            : "relative flex h-[min(482px,44vh)] w-full max-w-[488px] shrink-0 items-center justify-center"
       }
     >
       <div
         className={
           desktop
             ? "absolute left-[6px] top-0 h-[482px] w-[482px]"
-            : "absolute left-1/2 top-1/2 size-[min(482px,92vw)] -translate-x-1/2 -translate-y-1/2"
+            : "absolute left-1/2 top-1/2 size-[min(482px,88vw)] -translate-x-1/2 -translate-y-1/2"
         }
       >
         <OptionDiamonds variant="gallery" />

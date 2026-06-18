@@ -129,8 +129,8 @@ export function SelectSection() {
       ?.rectangleIndex ?? null;
 
   return (
-    <section className="absolute inset-0 overflow-auto bg-[#FCFCFC] text-[#1A1B1C] min-[1200px]:overflow-hidden">
-      <div className="mx-auto flex min-h-full w-full flex-col items-center px-6 pb-32 pt-28 min-[1200px]:block min-[1200px]:px-0 min-[1200px]:pb-0 min-[1200px]:pt-0">
+    <section className="absolute inset-0 overflow-x-hidden overflow-y-auto bg-[#FCFCFC] text-[#1A1B1C] min-[1200px]:overflow-hidden">
+      <div className="mx-auto flex min-h-full w-full flex-col items-center px-4 pb-32 pt-28 sm:px-6 min-[1200px]:block min-[1200px]:px-0 min-[1200px]:pb-0 min-[1200px]:pt-0">
         <div className="w-full max-w-[320px] self-start min-[1200px]:absolute min-[1200px]:left-9 min-[1200px]:top-[72px]">
           <div className="flex flex-col gap-[1px]">
             <p
@@ -151,7 +151,7 @@ export function SelectSection() {
         </div>
 
         <div className="mt-10 flex flex-1 items-center justify-center min-[1200px]:absolute min-[1200px]:left-1/2 min-[1200px]:top-1/2 min-[1200px]:mt-0 min-[1200px]:-translate-x-1/2 min-[1200px]:-translate-y-1/2">
-          <div className="relative h-[764px] w-[764px] origin-center scale-[0.72] sm:scale-[0.84] lg:scale-[0.94] min-[1200px]:scale-100">
+          <div className="relative h-[764px] w-[764px] origin-center scale-[0.5] min-[360px]:scale-[0.56] min-[420px]:scale-[0.64] sm:scale-[0.74] lg:scale-[0.92] min-[1200px]:scale-100">
             {RECTANGLE_LAYERS.map((layer, index) => (
               <div
                 key={layer.src}
@@ -195,7 +195,7 @@ export function SelectSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-8 z-30 flex">
+      <div className="absolute bottom-6 left-4 z-30 flex sm:bottom-8 sm:left-8">
         <SelectEdgeAction
           direction="left"
           label="Back"
@@ -203,7 +203,7 @@ export function SelectSection() {
         />
       </div>
 
-      <div className="absolute bottom-8 right-8 z-30 flex">
+      <div className="absolute bottom-6 right-4 z-30 flex sm:bottom-8 sm:right-8">
         <SelectEdgeAction
           direction="right"
           href="/summary"
