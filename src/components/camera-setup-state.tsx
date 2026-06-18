@@ -66,9 +66,9 @@ export function CameraSetupState({ onCancel }: { onCancel: () => void }) {
           </p>
 
           <div className="flex max-w-[780px] flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[12px] font-normal uppercase leading-6 tracking-[-0.02em] text-[#1A1B1C] min-[1080px]:gap-x-10 min-[1080px]:text-[14px]">
-            <span>◊ NEUTRAL EXPRESSION</span>
-            <span>◊ FRONTAL POSE</span>
-            <span>◊ ADEQUATE LIGHTING</span>
+            <span>&loz; NEUTRAL EXPRESSION</span>
+            <span>&loz; FRONTAL POSE</span>
+            <span>&loz; ADEQUATE LIGHTING</span>
           </div>
         </div>
       </div>
