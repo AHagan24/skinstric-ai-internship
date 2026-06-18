@@ -20,6 +20,9 @@ type UploadMode = "select" | "camera-setup" | "camera";
 type CameraModalStep = "idle" | "requesting";
 
 const CAMERA_SETUP_DELAY_MS = 1200;
+const PROGRESS_TICK_MS = 35;
+const PROGRESS_HOLD_MAX = 92;
+const PROGRESS_COMPLETE_MS = 420;
 
 function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -34,8 +37,11 @@ export function UploadSection() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const cameraSetupTimeoutRef = useRef<number | null>(null);
+  const cameraStreamRef = useRef<MediaStream | null>(null);
+  const progressIntervalRef = useRef<number | null>(null);
   const [mode, setMode] = useState<UploadMode>("select");
   const [step, setStep] = useState<UploadStep>("idle");
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState("");
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
   const [cameraModalStep, setCameraModalStep] =
@@ -45,6 +51,13 @@ export function UploadSection() {
 
   const isProcessing = step === "processing";
   const isRequestingCamera = cameraModalStep === "requesting";
+
+  const clearProgressAnimation = () => {
+    if (progressIntervalRef.current !== null) {
+      window.clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  };
 
   const clearCameraSetupDelay = () => {
     if (cameraSetupTimeoutRef.current !== null) {
@@ -59,17 +72,39 @@ export function UploadSection() {
 
   const resetCameraFlow = () => {
     clearCameraSetupDelay();
-    releaseCameraStream(cameraStream);
+    releaseCameraStream(cameraStreamRef.current);
+    cameraStreamRef.current = null;
     setCameraStream(null);
     setMode("select");
   };
 
   useEffect(() => {
+    cameraStreamRef.current = cameraStream;
+  }, [cameraStream]);
+
+  useEffect(() => {
+    return () => {
+      clearProgressAnimation();
+      clearCameraSetupDelay();
+      releaseCameraStream(cameraStreamRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (mode !== "camera-setup" || !cameraStream) {
+      return;
+    }
+
+    clearCameraSetupDelay();
+    cameraSetupTimeoutRef.current = window.setTimeout(() => {
+      setMode("camera");
+      cameraSetupTimeoutRef.current = null;
+    }, CAMERA_SETUP_DELAY_MS);
+
     return () => {
       clearCameraSetupDelay();
-      releaseCameraStream(cameraStream);
     };
-  }, [cameraStream]);
+  }, [cameraStream, mode]);
 
   const openFilePicker = () => {
     if (!isProcessing) {
@@ -123,18 +158,54 @@ export function UploadSection() {
       setCameraModalStep("idle");
       setCameraStream(stream);
       setMode("camera-setup");
-
-      clearCameraSetupDelay();
-      cameraSetupTimeoutRef.current = window.setTimeout(() => {
-        setMode("camera");
-        cameraSetupTimeoutRef.current = null;
-      }, CAMERA_SETUP_DELAY_MS);
     } catch {
       setCameraModalStep("idle");
       setCameraModalError(
         "Camera access was not allowed. Please allow access to continue, or upload an image instead.",
       );
     }
+  };
+
+  const startProgressAnimation = () => {
+    clearProgressAnimation();
+    setUploadProgress(0);
+    setStep("processing");
+
+    progressIntervalRef.current = window.setInterval(() => {
+      setUploadProgress((current) => {
+        if (current >= PROGRESS_HOLD_MAX) {
+          return current;
+        }
+
+        const remaining = PROGRESS_HOLD_MAX - current;
+        const increment = Math.max(1, remaining * 0.08);
+        return Math.min(PROGRESS_HOLD_MAX, current + increment);
+      });
+    }, PROGRESS_TICK_MS);
+  };
+
+  const finishProgressAnimation = async () => {
+    clearProgressAnimation();
+
+    const startedAt = performance.now();
+
+    await new Promise<void>((resolve) => {
+      const tick = () => {
+        const elapsed = performance.now() - startedAt;
+        const next = Math.min(1, elapsed / PROGRESS_COMPLETE_MS);
+        setUploadProgress(PROGRESS_HOLD_MAX + (100 - PROGRESS_HOLD_MAX) * next);
+
+        if (next >= 1) {
+          setUploadProgress(100);
+          resolve();
+          return;
+        }
+
+        window.requestAnimationFrame(tick);
+      };
+
+      window.requestAnimationFrame(tick);
+    });
   };
 
   // Shared Phase 2 submission for both gallery uploads and selfie captures.
@@ -145,6 +216,8 @@ export function UploadSection() {
     if (!base64) {
       throw new Error("Could not read the image file.");
     }
+
+    startProgressAnimation();
 
     const response = await fetch(PHASE_TWO_ENDPOINT, {
       method: "POST",
@@ -176,7 +249,8 @@ export function UploadSection() {
       // Continue to results even when browser storage is unavailable.
     }
 
-    router.push("/result");
+    await finishProgressAnimation();
+    router.push("/select");
   };
 
   const handleFileChange = async (
@@ -196,12 +270,12 @@ export function UploadSection() {
     }
 
     setError("");
-    setStep("processing");
-
     try {
       const dataUrl = await readAsDataUrl(file);
       await submitImage(dataUrl);
     } catch (reason) {
+      clearProgressAnimation();
+      setUploadProgress(0);
       setError(
         reason instanceof Error && reason.message
           ? reason.message
@@ -213,16 +287,14 @@ export function UploadSection() {
 
   if (mode === "camera") {
     return (
-      <>
-        <div className="absolute inset-x-0 top-0 z-50">
-          <SiteHeader />
-        </div>
+      <section className="absolute inset-0 overflow-hidden bg-[#D1CFCA]">
         <CameraCapture
           onClose={resetCameraFlow}
           onConfirm={submitImage}
           initialStream={cameraStream}
         />
-      </>
+        {isProcessing ? <UploadProcessingOverlay progress={uploadProgress} /> : null}
+      </section>
     );
   }
 
@@ -252,22 +324,7 @@ export function UploadSection() {
       />
 
       {isProcessing ? (
-        <>
-          <div
-            role="status"
-            aria-label="Analyzing image"
-            className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-12 text-center"
-          >
-            <p className="text-xl font-normal leading-none tracking-[-0.02em] text-[#657086] sm:text-2xl">
-              Analyzing image
-            </p>
-            <span aria-hidden="true" className="flex items-center gap-6">
-              <span className="testing-loading-dot" />
-              <span className="testing-loading-dot" />
-              <span className="testing-loading-dot" />
-            </span>
-          </div>
-        </>
+        <UploadProcessingOverlay progress={uploadProgress} />
       ) : (
         <>
           <p className="absolute left-5 top-16 text-left text-[11px] font-semibold uppercase leading-4 sm:left-9 sm:text-xs min-[1080px]:left-8 min-[1080px]:top-[86px] min-[1080px]:text-base min-[1080px]:leading-6 min-[1080px]:tracking-[-0.02em]">
@@ -291,6 +348,7 @@ export function UploadSection() {
 
           <div className="absolute bottom-8 left-8 z-30 flex">
             <BackAction
+              variant="shrunk"
               onClick={() => router.push("/testing")}
               disabled={isProcessing}
             />
@@ -307,6 +365,74 @@ export function UploadSection() {
         />
       ) : null}
     </section>
+  );
+}
+
+function UploadProcessingOverlay({ progress }: { progress: number }) {
+  return (
+    <div
+      role="status"
+      aria-label={`Analyzing image ${Math.round(progress)} percent`}
+      className="absolute inset-0 z-40 flex items-center justify-center bg-[#FCFCFC]/96 px-6 text-center"
+    >
+      <div className="flex flex-col items-center gap-10">
+        <ProgressDial progress={progress} />
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-xl font-normal leading-none tracking-[-0.02em] text-[#1A1B1C] sm:text-2xl">
+            Analyzing image
+          </p>
+          <p className="text-[11px] font-semibold uppercase leading-4 tracking-[0.08em] text-[#657086] sm:text-xs">
+            Preparing your results
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressDial({ progress }: { progress: number }) {
+  const radius = 110;
+  const strokeWidth = 2;
+  const circumference = 2 * Math.PI * radius;
+  const clamped = Math.max(0, Math.min(100, progress));
+  const dashOffset = circumference * (1 - clamped / 100);
+
+  return (
+    <div className="relative flex h-[260px] w-[260px] items-center justify-center min-[1080px]:h-[320px] min-[1080px]:w-[320px]">
+      <svg
+        viewBox="0 0 240 240"
+        aria-hidden="true"
+        className="size-full -rotate-90"
+      >
+        <circle
+          cx="120"
+          cy="120"
+          r={radius}
+          fill="none"
+          stroke="#E6E7E8"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx="120"
+          cy="120"
+          r={radius}
+          fill="none"
+          stroke="#1A1B1C"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={dashOffset}
+          strokeLinecap="round"
+          className="transition-[stroke-dashoffset] duration-150 ease-out"
+        />
+      </svg>
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-[56px] font-light leading-none tracking-[-0.06em] text-[#1A1B1C] min-[1080px]:text-[72px]">
+          {Math.round(clamped)}
+          <span className="align-top text-[24px] min-[1080px]:text-[32px]">%</span>
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -410,6 +536,7 @@ function CameraOption({
           aria-hidden="true"
           width={136}
           height={136}
+          loading="eager"
           className="size-full object-contain"
         />
       </button>

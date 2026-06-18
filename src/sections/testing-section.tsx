@@ -259,15 +259,19 @@ export function TestingSection() {
 
       <div className="absolute bottom-8 left-8 z-30 flex">
         {step === "name" ? (
-          <BackAction />
+          <BackAction variant="shrunk" />
         ) : (
-          <BackAction onClick={handleBack} disabled={isProcessing} />
+          <BackAction
+            variant="shrunk"
+            onClick={handleBack}
+            disabled={isProcessing}
+          />
         )}
       </div>
 
       {step === "complete" && (
-        <div className="absolute bottom-8 right-8 z-30 flex">
-          <ProceedAction href="/testing/upload" />
+        <div className="testing-proceed-slide-in absolute bottom-8 right-8 z-30 flex">
+          <ProceedAction variant="shrunk" href="/testing/upload" />
         </div>
       )}
     </section>
