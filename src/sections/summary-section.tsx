@@ -136,13 +136,13 @@ export function SummarySection() {
   };
 
   return (
-    <section className="absolute inset-0 overflow-auto bg-[#FCFCFC] text-[#1A1B1C] min-[1200px]:overflow-hidden">
-      <div className="mx-auto flex min-h-full w-full flex-col px-6 pb-28 pt-28 min-[1200px]:block min-[1200px]:px-8 min-[1200px]:pb-0 min-[1200px]:pt-0">
+    <section className="absolute inset-0 overflow-x-hidden overflow-y-auto bg-[#FCFCFC] text-[#1A1B1C] min-[1200px]:overflow-hidden">
+      <div className="mx-auto flex min-h-full w-full flex-col px-4 pb-40 pt-24 sm:px-6 sm:pt-28 min-[1200px]:block min-[1200px]:px-8 min-[1200px]:pb-0 min-[1200px]:pt-0">
         <div className="min-[1200px]:absolute min-[1200px]:left-8 min-[1200px]:top-[92px]">
           <p className="font-roobert text-[16px] font-semibold uppercase leading-[24px] tracking-[-0.02em] text-[#1A1B1C]">
             A. I. ANALYSIS
           </p>
-          <h1 className="font-roobert mt-1 text-[56px] font-light uppercase leading-[0.9] tracking-[-0.06em] text-[#1A1B1C] sm:text-[72px] min-[1200px]:text-[78px]">
+          <h1 className="font-roobert mt-1 text-[44px] font-light uppercase leading-[0.9] tracking-[-0.06em] text-[#1A1B1C] min-[400px]:text-[56px] sm:text-[72px] min-[1200px]:text-[78px]">
             DEMOGRAPHICS
           </h1>
           <p className="font-roobert mt-3 text-[14px] font-normal uppercase leading-[24px] tracking-[0] text-[#1A1B1C]">
@@ -150,7 +150,7 @@ export function SummarySection() {
           </p>
         </div>
 
-        <div className="mt-[188px] flex flex-col gap-4 min-[1200px]:absolute min-[1200px]:inset-x-8 min-[1200px]:bottom-[96px] min-[1200px]:top-[324px] min-[1200px]:mt-0 min-[1200px]:flex-row min-[1200px]:gap-4">
+        <div className="mt-10 flex flex-col gap-4 sm:mt-14 min-[1200px]:absolute min-[1200px]:inset-x-8 min-[1200px]:bottom-[96px] min-[1200px]:top-[324px] min-[1200px]:mt-0 min-[1200px]:flex-row min-[1200px]:gap-4">
           <CategorySummaryCards
             activeCategory={activeCategory}
             actualKey={actualKey}
@@ -169,17 +169,29 @@ export function SummarySection() {
             onSelectOption={selectOption}
           />
         </div>
+
+        <p className="font-roobert mt-8 text-center text-[14px] font-normal leading-[24px] tracking-[0] text-[#A6ABB5] min-[1200px]:hidden">
+          If A.I. estimate is wrong, select the correct one.
+        </p>
+
+        <div className="mt-8 flex flex-col gap-4 min-[680px]:flex-row min-[680px]:items-end min-[680px]:justify-between min-[1200px]:hidden">
+          <SummaryBackAction onClick={() => router.push("/select")} />
+          <div className="flex items-center gap-3 self-end">
+            <SummaryTextButton label="Reset" onClick={resetSelections} />
+            <SummaryTextButton label="Confirm" onClick={confirmSelections} dark />
+          </div>
+        </div>
       </div>
 
       <p className="font-roobert absolute bottom-[72px] left-1/2 hidden -translate-x-1/2 text-center text-[14px] font-normal leading-[24px] tracking-[0] text-[#A6ABB5] min-[1200px]:block">
         If A.I. estimate is wrong, select the correct one.
       </p>
 
-      <div className="absolute bottom-8 left-8 z-30 flex">
+      <div className="absolute bottom-8 left-8 z-30 hidden min-[1200px]:flex">
         <SummaryBackAction onClick={() => router.push("/select")} />
       </div>
 
-      <div className="absolute bottom-8 right-8 z-30 flex items-center gap-4">
+      <div className="absolute bottom-8 right-8 z-30 hidden min-[1200px]:flex items-center gap-4">
         <SummaryTextButton label="Reset" onClick={resetSelections} />
         <SummaryTextButton label="Confirm" onClick={confirmSelections} dark />
       </div>
@@ -233,7 +245,7 @@ function MainSummaryPanel({
   activeCategory: CategoryKey;
 }) {
   return (
-    <div className="min-h-[420px] border-t border-[#1A1B1C]/35 bg-[#F8F8F8] px-4 py-6 min-[1200px]:flex min-[1200px]:min-h-0 min-[1200px]:flex-1 min-[1200px]:items-start min-[1200px]:justify-between min-[1200px]:px-4 min-[1200px]:py-5">
+    <div className="min-h-[360px] border-t border-[#1A1B1C]/35 bg-[#F8F8F8] px-4 py-6 sm:min-h-[420px] min-[1200px]:flex min-[1200px]:min-h-0 min-[1200px]:flex-1 min-[1200px]:items-start min-[1200px]:justify-between min-[1200px]:px-4 min-[1200px]:py-5">
       <div>
         <p className="font-roobert text-[18px] font-semibold uppercase leading-[16px] tracking-[-0.02em] text-[#5F646D] min-[1200px]:hidden">
           {CATEGORY_LABELS[activeCategory]}
@@ -259,7 +271,7 @@ function ConfidenceCircle({ percentage }: { percentage: number }) {
   const dashOffset = circumference * (1 - clamped / 100);
 
   return (
-    <div className="relative h-[280px] w-[280px] min-[1200px]:h-[420px] min-[1200px]:w-[420px]">
+    <div className="relative h-[240px] w-[240px] min-[480px]:h-[280px] min-[480px]:w-[280px] min-[1200px]:h-[420px] min-[1200px]:w-[420px]">
       <svg
         viewBox={`0 0 ${size} ${size}`}
         aria-hidden="true"
@@ -406,7 +418,7 @@ function SummaryTextButton({
     <button
       type="button"
       onClick={onClick}
-      className={`font-roobert inline-flex h-[38px] items-center justify-center border px-5 text-[14px] font-semibold uppercase leading-[16px] tracking-[-0.02em] transition-opacity duration-300 hover:opacity-70 ${
+      className={`font-roobert inline-flex h-[38px] min-w-[102px] items-center justify-center border px-5 text-[14px] font-semibold uppercase leading-[16px] tracking-[-0.02em] transition-opacity duration-300 hover:opacity-70 ${
         dark
           ? "border-[#1A1B1C] bg-[#1A1B1C] text-[#FCFCFC]"
           : "border-[#1A1B1C] bg-transparent text-[#1A1B1C]"

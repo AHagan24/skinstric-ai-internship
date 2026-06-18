@@ -158,106 +158,108 @@ export function TestingSection() {
         : "";
 
   return (
-    <section className="absolute inset-0 overflow-hidden bg-[#FCFCFC] text-center">
-      <p className="absolute left-5 top-16 text-left text-[11px] font-semibold uppercase leading-4 sm:left-9 sm:text-xs">
+    <section className="absolute inset-0 overflow-x-hidden overflow-y-auto bg-[#FCFCFC] text-center min-[1080px]:overflow-hidden">
+      <p className="absolute left-5 top-16 text-left text-[11px] font-semibold uppercase leading-4 sm:left-9 sm:text-xs min-[1080px]:left-8 min-[1080px]:top-[86px] min-[1080px]:text-base min-[1080px]:leading-6 min-[1080px]:tracking-[-0.02em]">
         TO START ANALYSIS
       </p>
 
-      <div className="absolute left-1/2 top-1/2 flex size-[min(95vw,762px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center sm:size-[min(82vw,762px)]">
-        <RotatingDiamonds />
+      <div className="mx-auto flex min-h-full w-full max-w-[762px] flex-col items-center justify-center px-4 pb-32 pt-28 sm:px-6 sm:pt-32 min-[1080px]:absolute min-[1080px]:left-1/2 min-[1080px]:top-1/2 min-[1080px]:block min-[1080px]:max-w-none min-[1080px]:-translate-x-1/2 min-[1080px]:-translate-y-1/2 min-[1080px]:px-0 min-[1080px]:pb-0 min-[1080px]:pt-0">
+        <div className="relative flex size-[min(92vw,640px)] flex-col items-center justify-center sm:size-[min(82vw,762px)] min-[1080px]:size-[762px]">
+          <RotatingDiamonds />
 
-        {isInputStep && (
-          <>
-            <button
-              type="button"
-              onClick={() => inputRef.current?.focus()}
-              className="relative z-10 mb-1 bg-transparent text-xs font-normal uppercase tracking-[0.08em] text-[#8F8F8F] sm:text-sm"
-            >
-              CLICK TO TYPE
-            </button>
-
-            <form
-              onSubmit={handleSubmit}
-              className="relative z-10"
-              aria-label={step === "name" ? "Introduce yourself" : "Your city"}
-            >
-              <label htmlFor={step} className="sr-only">
-                {prompt}
-              </label>
-              <input
-                key={step}
-                ref={inputRef}
-                id={step}
-                name={step}
-                type="text"
-                autoComplete={step === "name" ? "name" : "address-level2"}
-                value={step === "name" ? name : location}
-                onChange={(event) => {
-                  setError("");
-                  if (step === "name") {
-                    setNameInput(event.target.value);
-                  } else {
-                    setLocationInput(event.target.value);
-                  }
-                }}
-                placeholder={prompt}
-                aria-invalid={Boolean(error)}
-                aria-describedby={error ? "testing-error" : undefined}
-                className="w-[min(84vw,520px)] appearance-none border-0 border-b border-[#1A1B1C] bg-transparent py-1 text-center text-[clamp(2rem,8vw,3.75rem)] font-normal leading-[1.08] tracking-[-0.065em] text-[#1A1B1C] outline-none placeholder:text-[#9A9A9A] placeholder:opacity-100 focus:border-[#1A1B1C] focus:outline-none"
-              />
-              <button type="submit" className="sr-only">
-                Continue
+          {isInputStep ? (
+            <>
+              <button
+                type="button"
+                onClick={() => inputRef.current?.focus()}
+                className="relative z-10 mb-1 bg-transparent text-xs font-normal uppercase tracking-[0.08em] text-[#8F8F8F] sm:text-sm"
+              >
+                CLICK TO TYPE
               </button>
-            </form>
-          </>
-        )}
 
-        {isProcessing && (
-          <div
-            role="status"
-            aria-label="Processing submission"
-            className="relative z-10 flex flex-col items-center gap-12 text-center"
+              <form
+                onSubmit={handleSubmit}
+                className="relative z-10"
+                aria-label={step === "name" ? "Introduce yourself" : "Your city"}
+              >
+                <label htmlFor={step} className="sr-only">
+                  {prompt}
+                </label>
+                <input
+                  key={step}
+                  ref={inputRef}
+                  id={step}
+                  name={step}
+                  type="text"
+                  autoComplete={step === "name" ? "name" : "address-level2"}
+                  value={step === "name" ? name : location}
+                  onChange={(event) => {
+                    setError("");
+                    if (step === "name") {
+                      setNameInput(event.target.value);
+                    } else {
+                      setLocationInput(event.target.value);
+                    }
+                  }}
+                  placeholder={prompt}
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? "testing-error" : undefined}
+                  className="w-[min(84vw,520px)] appearance-none border-0 border-b border-[#1A1B1C] bg-transparent py-1 text-center text-[clamp(2rem,8vw,3.75rem)] font-normal leading-[1.08] tracking-[-0.065em] text-[#1A1B1C] outline-none placeholder:text-[#9A9A9A] placeholder:opacity-100 focus:border-[#1A1B1C] focus:outline-none"
+                />
+                <button type="submit" className="sr-only">
+                  Continue
+                </button>
+              </form>
+            </>
+          ) : null}
+
+          {isProcessing ? (
+            <div
+              role="status"
+              aria-label="Processing submission"
+              className="relative z-10 flex flex-col items-center gap-12 text-center"
+            >
+              <p className="text-xl font-normal leading-none tracking-[-0.02em] text-[#657086] sm:text-2xl">
+                Processing submission
+              </p>
+              <span aria-hidden="true" className="flex items-center gap-6">
+                <span className="testing-loading-dot" />
+                <span className="testing-loading-dot" />
+                <span className="testing-loading-dot" />
+              </span>
+            </div>
+          ) : null}
+
+          {step === "complete" ? (
+            <div
+              role="status"
+              aria-label={
+                response?.message ??
+                response?.SUCCESS ??
+                "Profile submitted successfully"
+              }
+              className="relative z-10 flex flex-col items-center gap-4 text-center sm:gap-5"
+            >
+              <p className="text-xl font-normal leading-none tracking-[-0.02em] text-[#1A1B1C] sm:text-2xl">
+                Thank you!
+              </p>
+              <p className="text-sm font-normal leading-5 text-[#657086] sm:text-base">
+                Proceed for the next step
+              </p>
+            </div>
+          ) : null}
+
+          <p
+            id="testing-error"
+            aria-live="polite"
+            className="absolute top-[calc(50%+4.5rem)] z-10 max-w-[30rem] px-4 text-xs font-semibold text-red-700 sm:top-[calc(50%+5rem)] sm:text-sm"
           >
-            <p className="text-xl font-normal leading-none tracking-[-0.02em] text-[#657086] sm:text-2xl">
-              Processing submission
-            </p>
-            <span aria-hidden="true" className="flex items-center gap-6">
-              <span className="testing-loading-dot" />
-              <span className="testing-loading-dot" />
-              <span className="testing-loading-dot" />
-            </span>
-          </div>
-        )}
-
-        {step === "complete" && (
-          <div
-            role="status"
-            aria-label={
-              response?.message ??
-              response?.SUCCESS ??
-              "Profile submitted successfully"
-            }
-            className="relative z-10 flex flex-col items-center gap-4 text-center sm:gap-5"
-          >
-            <p className="text-xl font-normal leading-none tracking-[-0.02em] text-[#1A1B1C] sm:text-2xl">
-              Thank you!
-            </p>
-            <p className="text-sm font-normal leading-5 text-[#657086] sm:text-base">
-              Proceed for the next step
-            </p>
-          </div>
-        )}
-
-        <p
-          id="testing-error"
-          aria-live="polite"
-          className="absolute top-[calc(50%+5rem)] z-10 max-w-[30rem] text-xs font-semibold text-red-700 sm:text-sm"
-        >
-          {error}
-        </p>
+            {error}
+          </p>
+        </div>
       </div>
 
-      <div className="absolute bottom-8 left-8 z-30 flex">
+      <div className="absolute bottom-6 left-4 z-30 flex sm:bottom-8 sm:left-8">
         {step === "name" ? (
           <BackAction variant="shrunk" />
         ) : (
@@ -269,11 +271,11 @@ export function TestingSection() {
         )}
       </div>
 
-      {step === "complete" && (
-        <div className="testing-proceed-slide-in absolute bottom-8 right-8 z-30 flex">
+      {step === "complete" ? (
+        <div className="testing-proceed-slide-in absolute bottom-6 right-4 z-30 flex sm:bottom-8 sm:right-8">
           <ProceedAction variant="shrunk" href="/testing/upload" />
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

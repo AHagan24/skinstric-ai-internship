@@ -39,8 +39,8 @@ export function SiteHeader({
   showEnterCode = true,
 }: SiteHeaderProps) {
   return (
-    <header className="relative z-50 mb-3 flex h-16 w-full items-start justify-between py-3">
-      <div className="flex scale-75 items-center justify-center pt-1">
+    <header className="relative z-50 mb-3 flex h-16 w-full items-start justify-between px-3 py-3 sm:px-5 lg:px-8">
+      <div className="flex scale-[0.72] items-center justify-center pt-1 sm:scale-75">
         <Link
           href="/"
           className="mr-2 inline-flex h-9 items-center justify-center whitespace-nowrap px-4 py-2 text-sm font-semibold leading-4"
@@ -58,7 +58,7 @@ export function SiteHeader({
         <button
           type="button"
           style={{ transform: "scale(0.8)" }}
-          className="mx-4 inline-flex h-9 items-center justify-center whitespace-nowrap bg-[#1A1B1C] px-4 py-2 text-[10px] font-semibold leading-4 text-[#FCFCFC] shadow-sm transition-colors duration-300 hover:bg-black"
+          className="mx-1 inline-flex h-9 items-center justify-center whitespace-nowrap bg-[#1A1B1C] px-4 py-2 text-[10px] font-semibold leading-4 text-[#FCFCFC] shadow-sm transition-colors duration-300 hover:bg-black sm:mx-2 lg:mx-4"
         >
           {landingContent.enterCode}
         </button>

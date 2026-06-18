@@ -242,7 +242,7 @@ export function CameraCapture({
               aria-label="Analyzing image"
               className="fixed inset-0 z-[100] flex items-center justify-center bg-black/12 px-6"
             >
-              <div className="w-[min(560px,82vw)] rounded-[20px] bg-white/45 px-10 py-8 backdrop-blur-lg">
+              <div className="w-[min(560px,82vw)] rounded-[20px] bg-white/45 px-6 py-7 backdrop-blur-lg sm:px-10 sm:py-8">
                 <p className="text-center text-[clamp(24px,3vw,34px)] font-normal tracking-[-0.03em] text-black/65">
                   ANALYZING IMAGE...
                 </p>
@@ -300,7 +300,7 @@ export function CameraCapture({
         onClick={onClose}
         disabled={status === "submitting"}
         aria-label="Back"
-        className="absolute bottom-8 left-8 z-30 transition-opacity duration-300 hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-30"
+        className="absolute bottom-6 left-4 z-30 transition-opacity duration-300 hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-30 sm:bottom-8 sm:left-8"
       >
         <Image
           src="/assets/camera-back-button-white.png"
@@ -315,7 +315,7 @@ export function CameraCapture({
 
       {isLive ? (
         <>
-          <div className="pointer-events-none absolute bottom-10 left-1/2 z-20 -translate-x-1/2 px-4">
+          <div className="pointer-events-none absolute bottom-8 left-1/2 z-20 -translate-x-1/2 px-4 sm:bottom-10">
             <Image
               src="/assets/camera-guidance.png"
               alt="To get better results make sure to have neutral expression, frontal pose, and adequate lighting."
@@ -330,7 +330,7 @@ export function CameraCapture({
             type="button"
             onClick={handleCapture}
             aria-label="Take picture"
-            className="absolute right-6 top-1/2 z-20 -translate-y-1/2 transition-opacity duration-300 hover:opacity-70 md:right-10 xl:right-14"
+            className="absolute right-4 top-1/2 z-20 -translate-y-1/2 transition-opacity duration-300 hover:opacity-70 sm:right-6 md:right-10 xl:right-14"
           >
             <Image
               src="/assets/camera-take-picture.png"
@@ -351,12 +351,12 @@ export function CameraCapture({
             <button
               type="button"
               onClick={handleRetake}
-              className="absolute bottom-28 left-1/2 z-30 inline-flex min-h-10 -translate-x-1/2 items-center justify-center rounded-full bg-black/38 px-5 text-sm font-semibold uppercase tracking-[0.04em] text-[#FCFCFC] backdrop-blur-sm transition-colors duration-300 hover:bg-black/50"
+              className="absolute bottom-24 left-1/2 z-30 inline-flex min-h-10 -translate-x-1/2 items-center justify-center rounded-full bg-black/38 px-5 text-sm font-semibold uppercase tracking-[0.04em] text-[#FCFCFC] backdrop-blur-sm transition-colors duration-300 hover:bg-black/50 sm:bottom-28"
             >
               Retake
             </button>
           ) : null}
-          <div className="absolute bottom-8 right-8 z-30 flex">
+          <div className="absolute bottom-6 right-4 z-30 flex sm:bottom-8 sm:right-8">
             <ProceedAction variant="shrunk-white" onClick={handleConfirm} />
           </div>
         </>
