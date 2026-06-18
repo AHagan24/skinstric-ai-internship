@@ -25,9 +25,7 @@ export function CameraCapture({
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const mountedRef = useRef(true);
-  const [status, setStatus] = useState<CameraStatus>(
-    initialStream ? "live" : "init",
-  );
+  const [status, setStatus] = useState<CameraStatus>("init");
   const [captured, setCaptured] = useState("");
   const [error, setError] = useState("");
 
@@ -39,12 +37,26 @@ export function CameraCapture({
   const bindStream = useCallback((stream: MediaStream) => {
     streamRef.current = stream;
 
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play().catch(() => {
-        // Autoplay is best-effort; the muted/playsInline video plays on its own.
-      });
+    const video = videoRef.current;
+
+    if (!video) {
+      if (mountedRef.current) {
+        setStatus("live");
+      }
+      return;
     }
+
+    video.onloadedmetadata = null;
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play().catch(() => {
+        // Autoplay is best-effort; the muted/playsInline video usually plays on its own.
+      });
+
+      if (mountedRef.current) {
+        setStatus("live");
+      }
+    };
   }, []);
 
   // setState happens inside the promise callbacks (after the camera responds),
@@ -112,6 +124,7 @@ export function CameraCapture({
   };
 
   const handleRetry = () => {
+    stopStream();
     setError("");
     setStatus("init");
     requestCamera();

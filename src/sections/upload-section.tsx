@@ -19,8 +19,6 @@ type UploadStep = "idle" | "processing";
 type UploadMode = "select" | "camera-setup" | "camera";
 type CameraModalStep = "idle" | "requesting";
 
-const CAMERA_SETUP_DELAY_MS = 1200;
-
 function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -30,10 +28,40 @@ function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
+function waitForStreamReady(stream: MediaStream): Promise<void> {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    let settled = false;
+
+    const finish = () => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      video.onloadedmetadata = null;
+      video.srcObject = null;
+      resolve();
+    };
+
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play().catch(() => {
+        // Autoplay may fail silently here; the visible camera view will retry.
+      });
+      finish();
+    };
+
+    window.setTimeout(finish, 1200);
+  });
+}
+
 export function UploadSection() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const cameraSetupTimeoutRef = useRef<number | null>(null);
   const [mode, setMode] = useState<UploadMode>("select");
   const [step, setStep] = useState<UploadStep>("idle");
   const [error, setError] = useState("");
@@ -46,19 +74,11 @@ export function UploadSection() {
   const isProcessing = step === "processing";
   const isRequestingCamera = cameraModalStep === "requesting";
 
-  const clearCameraSetupDelay = () => {
-    if (cameraSetupTimeoutRef.current !== null) {
-      window.clearTimeout(cameraSetupTimeoutRef.current);
-      cameraSetupTimeoutRef.current = null;
-    }
-  };
-
   const releaseCameraStream = (stream: MediaStream | null) => {
     stream?.getTracks().forEach((track) => track.stop());
   };
 
   const resetCameraFlow = () => {
-    clearCameraSetupDelay();
     releaseCameraStream(cameraStream);
     setCameraStream(null);
     setMode("select");
@@ -66,7 +86,6 @@ export function UploadSection() {
 
   useEffect(() => {
     return () => {
-      clearCameraSetupDelay();
       releaseCameraStream(cameraStream);
     };
   }, [cameraStream]);
@@ -123,12 +142,8 @@ export function UploadSection() {
       setCameraModalStep("idle");
       setCameraStream(stream);
       setMode("camera-setup");
-
-      clearCameraSetupDelay();
-      cameraSetupTimeoutRef.current = window.setTimeout(() => {
-        setMode("camera");
-        cameraSetupTimeoutRef.current = null;
-      }, CAMERA_SETUP_DELAY_MS);
+      await waitForStreamReady(stream);
+      setMode("camera");
     } catch {
       setCameraModalStep("idle");
       setCameraModalError(
@@ -176,7 +191,7 @@ export function UploadSection() {
       // Continue to results even when browser storage is unavailable.
     }
 
-    router.push("/result");
+    router.push("/summary");
   };
 
   const handleFileChange = async (
