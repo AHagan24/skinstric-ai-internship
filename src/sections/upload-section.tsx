@@ -19,11 +19,8 @@ type UploadStep = "idle" | "processing";
 type UploadMode = "select" | "camera-setup" | "camera";
 type CameraModalStep = "idle" | "requesting";
 
-<<<<<<< HEAD
-=======
 const CAMERA_SETUP_DELAY_MS = 1200;
 
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
 function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -33,7 +30,6 @@ function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
-<<<<<<< HEAD
 function waitForStreamReady(stream: MediaStream): Promise<void> {
   return new Promise((resolve) => {
     const video = document.createElement("video");
@@ -61,19 +57,13 @@ function waitForStreamReady(stream: MediaStream): Promise<void> {
       finish();
     };
 
-    window.setTimeout(finish, 1200);
+    window.setTimeout(finish, CAMERA_SETUP_DELAY_MS);
   });
 }
 
 export function UploadSection() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-=======
-export function UploadSection() {
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const cameraSetupTimeoutRef = useRef<number | null>(null);
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
   const [mode, setMode] = useState<UploadMode>("select");
   const [step, setStep] = useState<UploadStep>("idle");
   const [error, setError] = useState("");
@@ -86,25 +76,11 @@ export function UploadSection() {
   const isProcessing = step === "processing";
   const isRequestingCamera = cameraModalStep === "requesting";
 
-<<<<<<< HEAD
-=======
-  const clearCameraSetupDelay = () => {
-    if (cameraSetupTimeoutRef.current !== null) {
-      window.clearTimeout(cameraSetupTimeoutRef.current);
-      cameraSetupTimeoutRef.current = null;
-    }
-  };
-
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
   const releaseCameraStream = (stream: MediaStream | null) => {
     stream?.getTracks().forEach((track) => track.stop());
   };
 
   const resetCameraFlow = () => {
-<<<<<<< HEAD
-=======
-    clearCameraSetupDelay();
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
     releaseCameraStream(cameraStream);
     setCameraStream(null);
     setMode("select");
@@ -112,10 +88,6 @@ export function UploadSection() {
 
   useEffect(() => {
     return () => {
-<<<<<<< HEAD
-=======
-      clearCameraSetupDelay();
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
       releaseCameraStream(cameraStream);
     };
   }, [cameraStream]);
@@ -172,17 +144,8 @@ export function UploadSection() {
       setCameraModalStep("idle");
       setCameraStream(stream);
       setMode("camera-setup");
-<<<<<<< HEAD
       await waitForStreamReady(stream);
       setMode("camera");
-=======
-
-      clearCameraSetupDelay();
-      cameraSetupTimeoutRef.current = window.setTimeout(() => {
-        setMode("camera");
-        cameraSetupTimeoutRef.current = null;
-      }, CAMERA_SETUP_DELAY_MS);
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
     } catch {
       setCameraModalStep("idle");
       setCameraModalError(
@@ -192,7 +155,7 @@ export function UploadSection() {
   };
 
   // Shared Phase 2 submission for both gallery uploads and selfie captures.
-  // Resolves by navigating to the results page; throws on failure.
+  // Resolves by navigating to the selector page; throws on failure.
   const submitImage = async (dataUrl: string) => {
     const base64 = dataUrl.split(",")[1];
 
@@ -230,11 +193,7 @@ export function UploadSection() {
       // Continue to results even when browser storage is unavailable.
     }
 
-<<<<<<< HEAD
-    router.push("/summary");
-=======
-    router.push("/result");
->>>>>>> 9ea3a38 (feat(upload): add camera setup loading state)
+    router.push("/select");
   };
 
   const handleFileChange = async (
@@ -349,6 +308,7 @@ export function UploadSection() {
 
           <div className="absolute bottom-8 left-8 z-30 flex">
             <BackAction
+              variant="shrunk"
               onClick={() => router.push("/testing")}
               disabled={isProcessing}
             />
@@ -468,6 +428,7 @@ function CameraOption({
           aria-hidden="true"
           width={136}
           height={136}
+          loading="eager"
           className="size-full object-contain"
         />
       </button>
@@ -544,7 +505,7 @@ function GalleryOption({
             ? "absolute left-[179px] top-[173px] z-10 block size-[136px] transition-transform duration-300 hover:scale-105"
             : "relative z-10 block size-[136px] transition-transform duration-300 hover:scale-105"
         }
-        >
+      >
         <Image
           src="/assets/gallery.png"
           alt=""
