@@ -163,7 +163,7 @@ export function TestingSection() {
         TO START ANALYSIS
       </p>
 
-      <div className="mx-auto flex min-h-full w-full max-w-[762px] flex-col items-center justify-center px-4 pb-32 pt-28 sm:px-6 sm:pt-32 min-[1080px]:absolute min-[1080px]:left-1/2 min-[1080px]:top-1/2 min-[1080px]:block min-[1080px]:max-w-none min-[1080px]:-translate-x-1/2 min-[1080px]:-translate-y-1/2 min-[1080px]:px-0 min-[1080px]:pb-0 min-[1080px]:pt-0">
+      <div className="mx-auto flex min-h-full w-full max-w-[762px] flex-col items-center justify-center px-4 pb-32 pt-28 sm:px-6 sm:pt-32 min-[1080px]:fixed min-[1080px]:inset-0 min-[1080px]:z-20 min-[1080px]:max-w-none min-[1080px]:items-center min-[1080px]:justify-center min-[1080px]:px-0 min-[1080px]:pb-0 min-[1080px]:pt-0">
         <div className="relative flex size-[min(92vw,640px)] flex-col items-center justify-center sm:size-[min(82vw,762px)] min-[1080px]:size-[762px]">
           <RotatingDiamonds />
 
