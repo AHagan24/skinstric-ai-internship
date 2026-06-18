@@ -299,7 +299,9 @@ function DiamondSelector({
               onMouseLeave={() => onHoverSection(null)}
               onFocus={() => onHoverSection(section.id)}
               onBlur={() => onHoverSection(null)}
-              onClick={isClickable ? () => onSelectSection(section.id) : undefined}
+              onClick={
+                isClickable ? () => onSelectSection(section.id) : undefined
+              }
               className={`absolute inset-0 outline-none ${
                 isClickable ? "cursor-pointer" : "cursor-not-allowed"
               }`}
